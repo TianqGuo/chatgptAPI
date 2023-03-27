@@ -1,6 +1,6 @@
 const generate = async (prompt) => {
     // Get your API key from storage
-    const key = "<YOUR OPENAI API KEY>";
+    const key = '';
     const url = 'https://api.openai.com/v1/completions';
 
     // Call completions endpoint
@@ -11,7 +11,7 @@ const generate = async (prompt) => {
             Authorization: `Bearer ${key}`,
         },
         body: JSON.stringify({
-            model: 'code-davinci-002',
+            model: 'text-davinci-002',
             prompt: prompt,
             max_tokens: 1000,
             temperature: 0,
