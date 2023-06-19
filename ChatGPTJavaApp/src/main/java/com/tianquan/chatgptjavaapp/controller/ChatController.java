@@ -1,5 +1,6 @@
 package com.tianquan.chatgptjavaapp.controller;
 
+import com.tianquan.chatgptjavaapp.service.ChatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -16,18 +17,18 @@ import java.nio.charset.StandardCharsets;
 @Controller
 public class ChatController {
 
-//    @Autowired
-//    private ChatService chatService;
-//
-//    @RequestMapping(value = "/chat/{content}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-//    @ResponseBody
-//    public String getResponses(@PathVariable(value="content") String content) throws IOException {
-////        System.out.println(content);
-//        String decoded = java.net.URLDecoder.decode(content, StandardCharsets.UTF_8);
-//        System.out.println("Current input chat is: " + decoded);
-//        String chatResponse = chatService.getChatResponse(decoded);
-//        return chatResponse;
-//    }
+    @Autowired
+    private ChatService chatService;
+
+    @RequestMapping(value = "/chat/{content}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String getResponses(@PathVariable(value="content") String content) throws IOException {
+//        System.out.println(content);
+        String decoded = java.net.URLDecoder.decode(content, StandardCharsets.UTF_8);
+        System.out.println("Current input chat is: " + decoded);
+        String chatResponse = chatService.getChatResponse(decoded);
+        return chatResponse;
+    }
 
     @RequestMapping("/test")
     @ResponseBody
