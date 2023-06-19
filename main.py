@@ -13,7 +13,7 @@ def main(question):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     cur_client = Client()
-    text = cur_client.ask_question("What is the meaning of life?")
+    text = cur_client.ask_question("import libraries for building CNN classifiction model with")
     print(text)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
