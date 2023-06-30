@@ -39,7 +39,7 @@ class ModelPrediction:
         load_dotenv()
         # print(os.getenv("apikey"))
         # print(os.getenv("model_path"))
-        self.model = tf.keras.models.load_model(os.getenv("model_path"))
+        self.model = tf.keras.models.load_model(os.path.join(os.path.dirname(__file__), os.getenv("model_path")))
         self.config = self.model.get_config()
 
     def predict(self, x_input):
@@ -53,7 +53,7 @@ class ModelPrediction:
         return self.model
 
     def sanity_test(self):
-        df = pd.read_csv(os.getenv("preprocessed_data_path"))
+        df = pd.read_csv(os.path.join(os.path.dirname(__file__), os.getenv("preprocessed_data_path")))
         y = ['metformin', 'repaglinide', 'nateglinide', 'chlorpropamide', 'glimepiride', 'acetohexamide',
                   'glipizide', 'glyburide', 'tolbutamide', 'pioglitazone', 'rosiglitazone', 'acarbose', 'miglitol',
                   'troglitazone', 'tolazamide',
