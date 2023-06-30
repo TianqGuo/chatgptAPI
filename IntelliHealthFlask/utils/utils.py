@@ -35,8 +35,11 @@ class Client:
 
 
 class ModelPrediction:
-    def __init__(self, model_path=os.getenv("model_path")):
-        self.model = tf.keras.models.load_model(model_path)
+    def __init__(self, model_path="model_path"):
+        load_dotenv()
+        # print(os.getenv("apikey"))
+        # print(os.getenv("model_path"))
+        self.model = tf.keras.models.load_model(os.getenv("model_path"))
         self.config = self.model.get_config()
 
     def predict(self, x_input):
@@ -59,7 +62,15 @@ class ModelPrediction:
         x = df.drop(y, axis=1)
         test_input = np.array(x.iloc[0])
         test_input = test_input[None, :]  # shape 1x4
+        # print(test_input)
         print("Test input shape is: ", test_input.shape)
         test_output = self.model.predict(test_input)
+        # print(test_output)
         print("Test output shape is: ", test_output.shape)
         print("Sanity test passed!")
+
+if __name__ == "__main__":
+    cur_predict = ModelPrediction()
+    cur_predict.sanity_test()
+    # print(np.random.rand(1, 74))
+
