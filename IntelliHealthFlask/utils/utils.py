@@ -8,19 +8,16 @@ import joblib
 from sklearn.preprocessing import LabelEncoder
 
 
+def set_openai_key():
+    """Sets OpenAI key."""
+    load_dotenv()
+    openai.api_key = os.getenv("apikey")
+
+
 class Client:
     def __init__(self, engine="text-davinci-002"):
-        load_dotenv()
-        self.key = os.getenv("apikey")
         self.engine = engine
-        #
-        # # Load the API key from file
-        # with open(self.key, 'r') as f:
-        #     api_key = f.read().strip()
-
-        # Set up the OpenAI API client
-        # print(self.key)
-        openai.api_key = self.key
+        set_openai_key()
 
     def ask_question(self, prompt, max_tokens=180, n=1, stop=None, temperature=0.5):
         # Generate text
@@ -77,6 +74,9 @@ class ModelPrediction:
 
 
 if __name__ == "__main__":
-    cur_predict = ModelPrediction()
-    cur_predict.sanity_test()
+    # cur_predict = ModelPrediction()
+    # cur_predict.sanity_test()
+    client = Client()
+    print(os.environ['HOME'])
+    client.ask_question("What is the meaning of life?")
     # print(np.random.rand(1, 74))
