@@ -142,8 +142,6 @@ def sanity_test_parser():
     print(output_dict)
 
 
-
-
 if __name__ == "__main__":
     sanity_test_template()
     sanity_test_parser()

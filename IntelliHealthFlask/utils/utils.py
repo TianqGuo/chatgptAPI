@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import tensorflow as tf
 import joblib
+import pinecone
 from sklearn.preprocessing import LabelEncoder
 
 
@@ -12,6 +13,13 @@ def set_openai_key():
     """Sets OpenAI key."""
     load_dotenv()
     openai.api_key = os.getenv("apikey")
+
+def list_indexes():
+    print(pinecone.list_indexes())
+
+
+def create_index(index_name, dimension):
+    pinecone.create_index(name=index_name, dimension=dimension)
 
 
 class Client:
@@ -73,10 +81,37 @@ class ModelPrediction:
         print("Sanity test passed!")
 
 
+class VectorDB:
+    def __init__(self, vector_path="vector_path"):
+        load_dotenv()
+        pinecone.init(api_key=os.getenv("PINECONE_KEY"), environment=os.getenv("PINECONE_ENVIRON"))
+        self.cur_index = pinecone.Index('vector-database')
+
+    def sanity_test(self):
+        index = pinecone.Index('vector-database')
+        index.upsert([
+            ("A", [i for i in range(1024)]),
+            ("B", [i for i in range(1024, 0, -1)]),
+            ("C", (np.ones(1024) * 3).tolist()),
+            ("D", [i for i in range(0, 2048, 2)]),
+            ("E", [i for i in range(2048, 0, -2)]),
+        ])
+        response = index.query(
+            vector=(np.ones(1024) * 0.3).tolist(),
+            top_k=3,
+            include_values=False
+        )
+        print(response)
+        print("Sanity test passed!")
+
+
 if __name__ == "__main__":
     # cur_predict = ModelPrediction()
     # cur_predict.sanity_test()
-    client = Client()
-    print(os.environ['HOME'])
-    client.ask_question("What is the meaning of life?")
+    # client = Client()
+    # print(os.environ['HOME'])
+    # client.ask_question("What is the meaning of life?")
     # print(np.random.rand(1, 74))
+    cur_vector_db = VectorDB()
+    cur_vector_db.sanity_test()
+    print(cur_vector_db.cur_index.describe_index_stats())
