@@ -1,6 +1,7 @@
 import os
 
 import langchain
+from langchain import ConversationChain, LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferWindowMemory
 from langchain.prompts import ChatPromptTemplate
@@ -43,6 +44,17 @@ class LangChainService:
             k=10,
             return_messages=True
         )
+        self.conversation = ConversationChain(
+            llm=self.chat_openai_llm,
+            memory=self.memory,
+            verbose=False
+        )
+        self.chain = LLMChain(
+            llm=self.chat_openai_llm,
+            prompt=self.prompt_template,
+            memory=self.memory,
+            verbose=False
+        )
 
     def set_langchain_template_question(self, text, format_instructions=None):
         self.reset_template_string()
@@ -57,8 +69,21 @@ class LangChainService:
 
         return self.openai_llm(message)
 
+    # run this method before you call get_chain_prediction and get_langchain_response
     def reset_template_string(self):
         self.prompt_template = ChatPromptTemplate.from_template(self.template_string)
+        self.chain = LLMChain(
+            llm=self.chat_openai_llm,
+            prompt=self.prompt_template,
+            memory=self.memory,
+            verbose=False
+        )
+
+    def get_conversation_prediction(self, message):
+        return self.conversation(message)
+
+    def get_chain_prediction(self, prompt):
+        return self.chain.run(prompt)
 
 
 def sanity_test_template():
@@ -162,8 +187,24 @@ def sanity_test_parser():
     print(output_dict)
     print("Sanity Test Passed!")
 
-# def sanity_test_conversation():
+
+def sanity_test_conversation():
+    langchain_service = LangChainService()
+    print(langchain_service.conversation.predict(input="Hello, how are you?"))
+    print("Sanity Test Passed!")
+
+
+def sanity_test_chain():
+    langchain_service = LangChainService()
+    langchain_service.template_string = "What is the best name to describe \
+        a company that makes {product}?"
+    langchain_service.reset_template_string()
+    print(langchain_service.chain.run("table"))
+    print("Sanity Test Passed!")
+
 
 if __name__ == "__main__":
-    sanity_test_template()
-    sanity_test_parser()
+    # sanity_test_template()
+    # sanity_test_parser()
+    # sanity_test_conversation()
+    sanity_test_chain()
