@@ -2,6 +2,7 @@ import os
 
 import langchain
 from langchain.chat_models import ChatOpenAI
+from langchain.memory import ConversationBufferWindowMemory
 from langchain.prompts import ChatPromptTemplate
 from langchain.llms import OpenAI
 import openai
@@ -17,16 +18,34 @@ def set_langchain_key():
 
 
 class LangChainService:
-    def __init__(self):
+    def __init__(self, engine="gpt-3.5-turbo", max_tokens=180, n=1, stop=None, temperature=0.5):
         set_langchain_key()
         self.template_string = ""
         self.style = ""
-        self.template_chat = ChatOpenAI(temperature=0.0)
-        self.chat = OpenAI(temperature=0.0)
+        self.chat_openai_llm = ChatOpenAI(
+            model_name=engine,
+            max_tokens=max_tokens,
+            n=n,
+            stop=stop,
+            temperature=temperature,
+        )
+        # the following will not be supported by the new version of langchain
+        self.openai_llm = OpenAI(
+            model_name=engine,
+            max_tokens=max_tokens,
+            n=n,
+            stop=stop,
+            temperature=temperature,
+        )
         self.prompt_template = ChatPromptTemplate.from_template(self.template_string)
         self.current_question = None
+        self.memory = ConversationBufferWindowMemory(
+            k=10,
+            return_messages=True
+        )
 
     def set_langchain_template_question(self, text, format_instructions=None):
+        self.reset_template_string()
         self.current_question = self.prompt_template.format_messages(
             style=self.style,
             text=text, format_instructions=format_instructions)
@@ -34,9 +53,9 @@ class LangChainService:
     def get_langchain_response(self, message=None):
         if self.current_question and message is None:
             message = self.current_question
-            return self.template_chat(message)
+            return self.chat_openai_llm(message)
 
-        return self.chat(message)
+        return self.openai_llm(message)
 
     def reset_template_string(self):
         self.prompt_template = ChatPromptTemplate.from_template(self.template_string)
@@ -56,6 +75,8 @@ def sanity_test_template():
     print(langchain_service.current_question)
     print(langchain_service.get_langchain_response("How to learn ai tech quickly?"))
     print(langchain_service.get_langchain_response())
+
+    print("Sanity Test Passed!")
 
 def sanity_test_parser():
     langchain_service = LangChainService()
@@ -134,13 +155,14 @@ def sanity_test_parser():
 
     {format_instructions}
     """
-    langchain_service.reset_template_string()
     langchain_service.set_langchain_template_question(text=customer_review, format_instructions=format_instructions)
     response = langchain_service.get_langchain_response()
     print(response.content)
     output_dict = output_parser.parse(response.content)
     print(output_dict)
+    print("Sanity Test Passed!")
 
+# def sanity_test_conversation():
 
 if __name__ == "__main__":
     sanity_test_template()
