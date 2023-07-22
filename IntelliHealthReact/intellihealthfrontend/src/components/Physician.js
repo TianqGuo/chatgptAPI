@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Button, Input, Card, Form, InputNumber} from 'antd';
+import { Button, Input, Card, Form, InputNumber, Tabs} from 'antd';
 import axios from 'axios';
 
 const ASK_QUETIONS_URL = 'http://127.0.0.1:5000/api/v1/chat/'
@@ -16,14 +16,91 @@ class Physician extends Component {
             currentAnswer: "Your answer will be displayed here",
             gender: 0,
             age: 80,
-            hypentension: 0,
+            hypertension: 0,
             heartdisease: 1,
             smokingHistory: 4,
             bmi: 25.19,
             hbA1cLevel: 6.6,
             bloodGlucoseLevel: 140,
-            currentPrediction: null,
+            currentPrediction: "Your prediction will be displayed here",
         }
+        this.formRef = React.createRef();
+    }
+
+    onClickExample1 = async () => {
+        console.log("clicked example 1");
+        await this.setState({ gender: 0 });
+        this.formRef.current.setFieldsValue({
+            gender: 0,
+        });
+        await this.setState({ age: 80 });
+        this.formRef.current.setFieldsValue({
+            age: 80,
+        });
+        await this.setState({ hypertension: 0 });
+        this.formRef.current.setFieldsValue({
+            hypertension: 0,
+        });
+        await this.setState({ heartdisease: 1 });
+        this.formRef.current.setFieldsValue({
+            heartdisease: 1,
+        });
+        await this.setState({ smokingHistory: 4 });
+        this.formRef.current.setFieldsValue({
+            smokingHistory: 4,
+        });
+        await this.setState({ bmi: 25.19 });
+        this.formRef.current.setFieldsValue({
+            bmi: 25.19,
+        });
+        await this.setState({ hbA1cLevel: 6.6 });
+        this.formRef.current.setFieldsValue({
+            hbA1cLevel: 6.6,
+        });
+        await this.setState({ bloodGlucoseLevel: 140 });
+        this.formRef.current.setFieldsValue({
+            bloodGlucoseLevel: 140,
+        });
+        console.log("Data set to example 1");
+        // console.log(this.state.gender);
+    }
+
+    onClickExample2 = async () => {
+        console.log("clicked example 2");
+        await this.setState({ gender: 1 });
+        this.formRef.current.setFieldsValue({
+            gender: 1,
+        });
+        await this.setState({ age: 90 });
+        this.formRef.current.setFieldsValue({
+            age: 90,
+        });
+        await this.setState({ hypertension: 1 });
+        this.formRef.current.setFieldsValue({
+            hypertension: 1,
+        });
+        await this.setState({ heartdisease: 1 });
+        this.formRef.current.setFieldsValue({
+            heartdisease: 1,
+        });
+        await this.setState({ smokingHistory: 12 });
+        this.formRef.current.setFieldsValue({
+            smokingHistory: 12,
+        });
+        await this.setState({ bmi: 40 });
+        this.formRef.current.setFieldsValue({
+            bmi: 40,
+        });
+        await this.setState({ hbA1cLevel: 10 });
+        this.formRef.current.setFieldsValue({
+            hbA1cLevel: 10,
+        });
+        await this.setState({ bloodGlucoseLevel: 260 });
+        this.formRef.current.setFieldsValue({
+            bloodGlucoseLevel: 260,
+        });
+        console.log("Data set to example 2");
+        // console.log(this.state.gender);
     }
 
     onClickQuetions = async () => {
@@ -71,9 +148,9 @@ class Physician extends Component {
         console.log(this.state.age);
     }
 
-    onChangeHypentension = async e => {
-        await this.setState({ hypentension : e });
-        console.log(this.state.hypentension);
+    onChangeHypertension = async e => {
+        await this.setState({ hypertension : e });
+        console.log(this.state.hypertension);
     }
 
     onChangeHeartdisease = async e => {
@@ -140,7 +217,7 @@ class Physician extends Component {
     }
 
     onClickPrediction = () => {
-        var data = [[this.state.gender, this.state.age, this.state.hypentension, this.state.heartdisease, this.state.smokingHistory, this.state.bmi, this.state.hbA1cLevel, this.state.bloodGlucoseLevel]]
+        var data = [[this.state.gender, this.state.age, this.state.hypertension, this.state.heartdisease, this.state.smokingHistory, this.state.bmi, this.state.hbA1cLevel, this.state.bloodGlucoseLevel]]
         var matrix = { 'data': data }
         console.log(matrix);
         console.log(JSON.stringify(matrix));
@@ -181,82 +258,91 @@ class Physician extends Component {
     render() {
         return (
             <div className="Main" style={{fontWeight: "bold"}}>
-                IntelliHealthPrediction
-                <p style={{fontWeight: "normal", fontSize: "15px"}}>
-                    Please input the following information to get a prediction of your risk of getting diabetes.
-                </p>
-
-                <Form >
-                    <Form.Item label="Gender" name="gender" rules={[{ required: true, message: 'Please input valid numbers'}]}>
-                        <InputNumber min={0} onChange={this.onChangeGender} precision={2}/>
-                        {/* <Input onChange={this.onChangeAreaCode}/> */}
-                    </Form.Item>
-                    <Form.Item label="Age" name="age" rules={[{ required: true, message: 'Please input valid numbers'}]}>
-                        <InputNumber min={0} onChange={this.onChangeAge} precision={2}/>
-                        {/* <Input onChange={this.onChangeSevenDigits}/> */}
-                    </Form.Item>
-                    <Form.Item label="Hypertension" name="hypertension" rules={[{ required: true, message: 'Please input valid numbers'}]}>
-                        <InputNumber min={0} onChange={this.onChangeHypentension} precision={2}/>
-                    </Form.Item>
-                    <Form.Item label="Heart Disease" name="heartdisease" rules={[{ required: true, message: 'Please input valid numbers'}]}>
-                        <InputNumber min={0} onChange={this.onChangeHeartdisease} precision={2}/>
-                    </Form.Item>
-                    <Form.Item label="Smoking History" name="smokingHistory" rules={[{ required: true, message: 'Please input valid numbers'}]}>
-                        <InputNumber min={0} onChange={this.onChangeSmokingHistory} precision={2}/>
-                    </Form.Item>
-                    <Form.Item label="BMI" name="bmi" rules={[{ required: true, message: 'Please input valid numbers'}]}>
-                        <InputNumber min={0} onChange={this.onChangeBmi} precision={2}/>
-                    </Form.Item>
-                    <Form.Item label="HbA1c Level" name="hbA1cLevel" rules={[{ required: true, message: 'Please input valid numbers'}]}>
-                        <InputNumber min={0} onChange={this.onChangeHbA1cLevel} precision={2}/>
-                    </Form.Item>
-                    <Form.Item label="Blood Glucose Level" name="BloodGlucoseLevel" rules={[{ required: true, message: 'Please input valid numbers'}]}>
-                        <InputNumber min={0} onChange={this.onChangeBloodGlucoseLevel} precision={2}/>
-                    </Form.Item>
-                    
-                </Form> 
-
-                <Button  type="primary" htmlType="submit" onClick={this.onClickPrediction}> Get Prediction </Button>
-
-
-
-                <div>
-                    <Card title="Prediction: " bordered={false} style={{ width: 800, margin: 20}}>
-                        <p >
-                            {this.state.currentPrediction}
+                <Tabs defaultActiveKey = "prediction">
+                    <Tabs.TabPane tab="Prediction" key="prediction">
+                        IntelliHealth Prediction
+                        <p style={{fontWeight: "normal", fontSize: "15px"}}>
+                            Please input the following information to get a prediction of your risk of getting diabetes.
                         </p>
-                    </Card>
 
-                </div>
+                        <Form ref={this.formRef}>
+                            <Form.Item label="Gender" name="gender" initialValue={0} rules={[{ required: true, message: 'Please input valid numbers'}]}>
+                                <InputNumber min={0} max={1} onChange={this.onChangeGender} precision={0}/>
+                            </Form.Item>
+                            <Form.Item label="Age" name="age" initialValue={80} rules={[{ required: true, message: 'Please input valid numbers'}]}>
+                                <InputNumber min={0} max={100} onChange={this.onChangeAge} precision={0}/>
+                            </Form.Item>
+                            <Form.Item label="Hypertension" name="hypertension" initialValue={0} rules={[{ required: true, message: 'Please input valid numbers'}]}>
+                                <InputNumber min={0} max={1} onChange={this.onChangeHypertension} precision={0}/>
+                            </Form.Item>
+                            <Form.Item label="Heart Disease" name="heartdisease" initialValue={1} rules={[{ required: true, message: 'Please input valid numbers'}]}>
+                                <InputNumber min={0} max={1} onChange={this.onChangeHeartdisease} precision={0}/>
+                            </Form.Item>
+                            <Form.Item label="Smoking History" name="smokingHistory" initialValue={4} rules={[{ required: true, message: 'Please input valid numbers'}]}>
+                                <InputNumber min={0} max={100} onChange={this.onChangeSmokingHistory} precision={2}/>
+                            </Form.Item>
+                            <Form.Item label="BMI" name="bmi" initialValue={25.19} rules={[{ required: true, message: 'Please input valid numbers'}]}>
+                                <InputNumber min={0} max={100} onChange={this.onChangeBmi} precision={2}/>
+                            </Form.Item>
+                            <Form.Item label="HbA1c Level" name="hbA1cLevel" initialValue={6.6} rules={[{ required: true, message: 'Please input valid numbers'}]}>
+                                <InputNumber min={0} max={100} onChange={this.onChangeHbA1cLevel} precision={2}/>
+                            </Form.Item>
+                            <Form.Item label="Blood Glucose Level" name="bloodGlucoseLevel" initialValue={140} rules={[{ required: true, message: 'Please input valid numbers'}]}>
+                                <InputNumber min={0} max={600} onChange={this.onChangeBloodGlucoseLevel} precision={2}/>
+                            </Form.Item>
 
-                IntelliHealthBot
-                <p style={{fontWeight: "normal", fontSize: "15px"}}>
-                    If you have any question, feel free to ask any questions about the diabetes
-                </p>
+                        </Form>
+
+                        <Button  type="primary" htmlType="submit" onClick={this.onClickExample1} style={{ margin: 20 }}> Example 1 </Button>
+
+                        <Button  type="primary" htmlType="submit" onClick={this.onClickExample2} style={{  margin: 20 }}> Example 2 </Button>
+
+                        <p></p>
+
+                        <Button  type="primary" htmlType="submit" onClick={this.onClickPrediction}> Get Prediction </Button>
 
 
-                <TextArea showCount maxLength={100} onChange={this.onChangeQuestions} style={{ width: 800, height: 300 }} />
-                <p>
 
-                </p>
 
-                <Button type="primary" htmlType="submit" onClick={this.onClickQuetions}> Send it </Button>
 
-                <p>
+                        <div>
+                            <Card title="Prediction: " bordered={false} style={{ width: 800, margin: 20}}>
+                                <p >
+                                    {this.state.currentPrediction}
+                                </p>
+                            </Card>
 
-                </p>
+                        </div>
+                    </Tabs.TabPane>
 
-                <div>
-                    <Card title="ChatBot Response: " bordered={false} style={{ width: 800, margin: 20 }}>
-                        <p >
-                            {this.state.currentAnswer}
+                    <Tabs.TabPane tab="Chatbot" key="chatbot">
+                        IntelliHealth ChatBot
+                        <p style={{fontWeight: "normal", fontSize: "15px"}}>
+                            If you have any question, feel free to ask any questions about the diabetes
                         </p>
-                    </Card>
-
-                </div>
 
 
+                        <TextArea showCount maxLength={100} onChange={this.onChangeQuestions} style={{ width: 800, height: 350 }} />
+                        <p>
 
+                        </p>
+
+                        <Button type="primary" htmlType="submit" onClick={this.onClickQuetions}> Send it </Button>
+
+                        <p>
+
+                        </p>
+
+                        <div>
+                            <Card title="ChatBot Response: " bordered={false} style={{ width: 800, margin: 20 }}>
+                                <p >
+                                    {this.state.currentAnswer}
+                                </p>
+                            </Card>
+
+                        </div>
+                    </Tabs.TabPane>
+                </Tabs>
             </div>
         );
     }
