@@ -9,12 +9,14 @@ from langchain.llms import OpenAI
 import openai
 from langchain.output_parsers import ResponseSchema
 from langchain.output_parsers import StructuredOutputParser
+from langchain.vectorstores import Pinecone
 
 from utils.utils import set_openai_key
 
 
 def set_langchain_key():
     set_openai_key()
+    # print("key: ", openai.api_key)
     os.environ["OPENAI_API_KEY"] = openai.api_key
 
 
