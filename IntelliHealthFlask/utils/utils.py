@@ -14,13 +14,6 @@ def set_openai_key():
     load_dotenv()
     openai.api_key = os.getenv("apikey")
 
-def list_indexes():
-    print(pinecone.list_indexes())
-
-
-def create_index(index_name, dimension):
-    pinecone.create_index(name=index_name, dimension=dimension)
-
 
 class Client:
     def __init__(self, engine="text-davinci-002"):
