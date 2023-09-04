@@ -1,14 +1,19 @@
 import os
 
 import langchain
+import pinecone
 from langchain import ConversationChain, LLMChain
+from langchain.agents import initialize_agent
+from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatOpenAI
+from langchain.embeddings import OpenAIEmbeddings
 from langchain.memory import ConversationBufferWindowMemory
 from langchain.prompts import ChatPromptTemplate
 from langchain.llms import OpenAI
 import openai
 from langchain.output_parsers import ResponseSchema
 from langchain.output_parsers import StructuredOutputParser
+from langchain.tools import Tool
 from langchain.vectorstores import Pinecone
 
 from utils.utils import set_openai_key
@@ -57,6 +62,47 @@ class LangChainService:
             memory=self.memory,
             verbose=False
         )
+        self.picone_index = None
+        self.picone_embed = None
+        self.vectorstore = self.pinecone_init()
+        self.qa = qa = RetrievalQA.from_chain_type(
+                        llm=self.openai_llm,
+                        chain_type="stuff",
+                        retriever=self.vectorstore.as_retriever()
+        )
+        self.tools = [
+            Tool(
+                name='Knowledge Base',
+                func=self.qa.run,
+                description=(
+                    'use this tool when answering general knowledge queries to get '
+                    'more information about the topic'
+                )
+            )
+        ]
+        self.agent = initialize_agent(
+            agent=ConversationChain,
+            tools=self.tools,
+            llm=self.chat_openai_llm,
+            verbose=True,
+            max_iterations=3,
+            early_stopping_method='generate',
+            memory=self.memory
+        )
+
+    def pinecone_init(self):
+        pinecone.init(
+            api_key=os.getenv("PINECONE_KEY"),  # find at app.pinecone.io
+            environment=os.getenv("PINECONE_ENVIRON"),  # next to api key in console
+        )
+        index_name = "vectordatabase"
+        self.picone_index = pinecone.Index(index_name)
+        self.picone_embed = OpenAIEmbeddings(openai_api_key=openai.api_key)
+        text_field = "text"
+
+        return Pinecone(self.picone_index, self.picone_embed.embed_query, text_field)
+
+
 
     def set_langchain_template_question(self, text, format_instructions=None):
         self.reset_template_string()
